@@ -2,103 +2,54 @@
 
 namespace app\models;
 
-class User extends \yii\base\Object implements \yii\web\IdentityInterface
+use yii\db\ActiveRecord;
+
+class User extends ActiveRecord
 {
-    public $id;
-    public $username;
-    public $password;
-    public $authKey;
-    public $accessToken;
-
-    private static $users = [
-        '100' => [
-            'id' => '100',
-            'username' => 'admin',
-            'password' => 'admin',
-            'authKey' => 'test100key',
-            'accessToken' => '100-token',
-        ],
-        '101' => [
-            'id' => '101',
-            'username' => 'demo',
-            'password' => 'demo',
-            'authKey' => 'test101key',
-            'accessToken' => '101-token',
-        ],
-    ];
-
-
     /**
-     * @inheritdoc
+     * @return string AR 类关联的数据库表名称
      */
-    public static function findIdentity($id)
+    public static function tableName()
     {
-        return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
+        return '{{User}}';
     }
 
-    /**
-     * @inheritdoc
-     */
-    public static function findIdentityByAccessToken($token, $type = null)
+    public function rules()
     {
-        foreach (self::$users as $user) {
-            if ($user['accessToken'] === $token) {
-                return new static($user);
-            }
-        }
-
-        return null;
+        return [
+            // username and password are both required
+            [['logintime','createtime'], 'safe']
+        ];
     }
 
-    /**
-     * Finds user by username
-     *
-     * @param string $username
-     * @return static|null
-     */
-    public static function findByUsername($username)
+    static public function findByUsername($username)
     {
-        foreach (self::$users as $user) {
-            if (strcasecmp($user['username'], $username) === 0) {
-                return new static($user);
-            }
-        }
-
-        return null;
+        return User::find()
+        ->where(['username' => $username])
+        ->one();
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getId()
+    public function validatePassword($username,$password)
     {
-        return $this->id;
+        $validatapass = md5(sha1('wwq',$password));
+        return User::find()
+        ->where(['username' => $username,'password'=>$validatapass])
+        ->one();
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getAuthKey()
+    public function login($username)
     {
-        return $this->authKey;
+        $userInfo = User::find()->where(['username' => $username])->one();
+        $userInfo->logintime = date('Y-m-d H:i:s');
+        return $userInfo->save();
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function validateAuthKey($authKey)
+    public function register($username,$password)
     {
-        return $this->authKey === $authKey;
-    }
-
-    /**
-     * Validates password
-     *
-     * @param string $password password to validate
-     * @return bool if password provided is valid for current user
-     */
-    public function validatePassword($password)
-    {
-        return $this->password === $password;
+        $newUser = new User();
+        $newUser->username = $username;
+        $newUser->password = md5(sha1('wwq',$password));
+        $newUser->createtime = date('Y-m-d H:i:s');
+        return $newUser->save();
     }
 }
