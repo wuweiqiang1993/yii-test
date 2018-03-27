@@ -31,7 +31,7 @@ class User extends ActiveRecord
 
     public function validatePassword($username,$password)
     {
-        $validatapass = md5(sha1('wwq',$password));
+        $validatapass = md5(sha1('wwq'.$password));
         return User::find()
         ->where(['username' => $username,'password'=>$validatapass])
         ->one();
@@ -48,8 +48,14 @@ class User extends ActiveRecord
     {
         $newUser = new User();
         $newUser->username = $username;
-        $newUser->password = md5(sha1('wwq',$password));
+        $newUser->password = md5(sha1('wwq'.$password));
         $newUser->createtime = date('Y-m-d H:i:s');
         return $newUser->save();
+    }
+    
+    static public function validateUsername($username)
+    {
+        $userInfo = User::find()->where(['username' => $username])->one();
+        return $userInfo;
     }
 }

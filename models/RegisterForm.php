@@ -26,9 +26,20 @@ class RegisterForm extends Model
     {
         return [
             // username and password are both required
+            [['username'], 'trim'],
             ['username', 'required','message' => '用户名不能为空'],
+            ['username', 'validateUsername'],
             ['password', 'required','message' => '密码不能为空'],
+            ['password', 'match', 'pattern' => '/^[a-zA-Z]\w{11,19}$/i','message' => '密码格式为字母开头的12~20位数字或字母'],
         ];
+    }
+    public function validateUsername($attribute, $params)
+    {
+        if (!$this->hasErrors()) {
+            if (User::validateUsername($this->username)) {
+                $this->addError($attribute, '该账号已存在，请重新输入账号');
+            }
+        }
     }
 
     public function register()
