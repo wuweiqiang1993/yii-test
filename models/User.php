@@ -3,8 +3,9 @@
 namespace app\models;
 
 use yii\db\ActiveRecord;
+use yii;
 
-class User extends ActiveRecord
+class User extends ActiveRecord implements yii\web\IdentityInterface
 {
     /**
      * @return string AR 类关联的数据库表名称
@@ -57,5 +58,30 @@ class User extends ActiveRecord
     {
         $userInfo = User::find()->where(['username' => $username])->one();
         return $userInfo;
+    }
+
+    public static function findIdentity($id)
+    {
+        return static::findOne($id);
+    }
+
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        return static::findOne(['access_token' => $token]);
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getAuthKey()
+    {
+        return $this->authKey;
+    }
+
+    public function validateAuthKey($authKey)
+    {
+        return $this->authKey === $authKey;
     }
 }

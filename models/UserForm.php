@@ -58,7 +58,8 @@ class UserForm extends Model
     {
         if ($this->validate()) {
             $user = $this->getUser();
-            return $user->login($this->username);
+            $user->login($this->username);
+            return Yii::$app->user->login($this->getUser());
         }
         return false;
     }
