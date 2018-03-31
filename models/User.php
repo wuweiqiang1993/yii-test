@@ -18,7 +18,7 @@ class User extends ActiveRecord implements yii\web\IdentityInterface
     public function rules()
     {
         return [
-            // username and password are both required
+            // 登录、创建时间为安全字段
             [['logintime','createtime'], 'safe']
         ];
     }
@@ -51,6 +51,7 @@ class User extends ActiveRecord implements yii\web\IdentityInterface
         $newUser->username = $username;
         $newUser->password = md5(sha1('wwq'.$password));
         $newUser->createtime = date('Y-m-d H:i:s');
+        $newUser->authKey = $username.time();
         return $newUser->save();
     }
     

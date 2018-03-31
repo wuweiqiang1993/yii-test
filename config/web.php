@@ -12,6 +12,11 @@ $config = [
         '@npm'   => '@vendor/npm-asset',
     ],
     'timeZone' => 'Asia/Shanghai',
+    'modules' => [  
+        'admin' => [  
+            'class' => 'app\modules\admin\Module',  
+        ],  
+    ],  
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
@@ -23,6 +28,17 @@ $config = [
         'user' => [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
+        ],
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+            // auth_item (role permission)
+            // auth_item_child (role->permission)
+            // auth_assignment (user->role)
+            // auth_rule (rule)
+            'itemTable' => '{{%auth_item}}',
+            'itemChildTable' => '{{%auth_item_child}}',
+            'assignmentTable' => '{{%auth_assignment}}',
+            'ruleTable' => '{{%auth_rule}}',
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
