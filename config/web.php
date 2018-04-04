@@ -40,6 +40,15 @@ $config = [
             'assignmentTable' => '{{%auth_assignment}}',
             'ruleTable' => '{{%auth_rule}}',
         ],
+        'assetManager'=>[
+            'bundles'=>[
+                'yii\web\JqueryAsset'=>[
+                    'jsOptions'=>[
+                        'position'=>\yii\web\View::POS_HEAD,
+                    ]
+                ]
+            ]
+        ],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],

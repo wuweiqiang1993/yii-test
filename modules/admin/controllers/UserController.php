@@ -2,9 +2,10 @@
 
 namespace app\modules\admin\controllers;
 
+use Yii;
 use app\models\User;
 use app\modules\admin\controllers;
-use yii\data\ActiveDataProvider;
+use yii\web\Response;
 
 /**
  * Default controller for the `admin` module
@@ -13,14 +14,10 @@ class UserController extends AdminController
 {
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => User::find()->orderBy('id DESC'),
-            'pagination' => [
-                'pageSize' => 15,
-            ],
-        ]);
-        return $this->render('index', ['dataProvider' => $dataProvider]);
+        $searchModel = new User();
+        $dataProvider = $searchModel->search(Yii::$app->request->get());
 
+        return $this->render('index', ['dataProvider' => $dataProvider,'searchModel'=>$searchModel]);
     }
 
     public function actionAudit()

@@ -3,6 +3,7 @@
 namespace app\models;
 
 use yii\db\ActiveRecord;
+use yii\data\ActiveDataProvider;
 use yii;
 
 class User extends ActiveRecord implements yii\web\IdentityInterface
@@ -19,7 +20,7 @@ class User extends ActiveRecord implements yii\web\IdentityInterface
     {
         return [
             // 登录、创建时间为安全字段
-            [['logintime','createtime'], 'safe']
+            [['username','logintime','createtime'], 'safe']
         ];
     }
 
@@ -84,5 +85,31 @@ class User extends ActiveRecord implements yii\web\IdentityInterface
     public function validateAuthKey($authKey)
     {
         return $this->authKey === $authKey;
+    }
+
+    public function search($params)
+    {
+        $query = User::find();
+        
+        if(!Yii::$app->request->get('sort')){
+            $query->orderBy('id desc');
+        }
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                    'pageSize' => 15,
+                ],
+        ]);
+
+        // 从参数的数据中加载过滤条件，并验证
+        if (!($this->load($params) && $this->validate())) {
+            return $dataProvider;
+        }
+        // 增加过滤条件来调整查询对象
+        $query->andFilterWhere(['LIKE', 'username', $this->username]);
+        $query->andFilterWhere(['>=', 'logintime', $this->logintime]);
+        $query->andFilterWhere(['>=', 'createtime', $this->createtime]);
+        return $dataProvider;
     }
 }
