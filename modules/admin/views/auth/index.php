@@ -18,29 +18,47 @@ echo GridView::widget([
         // 使用的是模型的列的数据
         [
             'class' => 'yii\grid\DataColumn',
-            'attribute'=>'username',
-            'label'=>'账号',
-            'headerOptions' => ['width' => '120'],
+            'attribute'=>'name',
+            'label'=>'权限/角色',
+        ],
+        [
+            'header'=>'类型',
+            'value' => function($data) {
+                switch ($data->type) {
+                    case '1';
+                        return '角色';
+                        break;
+                    case '2';
+                        return '权限';
+                        break;
+                    default:
+                        return '未知状态';
+                        break;
+                }
+            }
         ],
         [
             'class' => 'yii\grid\DataColumn',
-            'attribute'=>'logintime',
-            'label'=>'最后登录时间',
-            'headerOptions' => ['width' => '200'],
-            'filterInputOptions'=>['class'=>'form-control wDate','id'=>'logintime']
+            'attribute'=>'rule_name',
+            'label'=>'规则',
         ],
         [
             'class' => 'yii\grid\DataColumn',
-            'attribute'=>'createtime',
-            'label'=>'创建时间',
-            'headerOptions' => ['width' => '200'],
-            'filterInputOptions'=>['class'=>'form-control wDate','id'=>'createtime']
+            'attribute'=>'updated_at',
+            'label'=>'最后修改时间',
+            'filterInputOptions'=>['class'=>'form-control','id'=>'logintime']
+        ],
+        [
+            'class' => 'yii\grid\DataColumn',
+            'attribute'=>'description',
+            'label'=>'描述',
+            'filterInputOptions'=>['class'=>'form-control','id'=>'createtime']
         ],
         [
             //动作列yii\grid\ActionColumn 
             //用于显示一些动作按钮，如每一行的更新、删除操作。
            'class' => 'yii\grid\ActionColumn',
-           'header' => '管理用户权限', 
+           'header' => '管理  '.Html::a('[增加权限/角色]', ['auth/additem'], ['class' => 'profile-link']), 
            'template' => '{audit}',//操作权限
            'buttons' => [
                 'audit' => function ($url, $model, $key) {
@@ -50,7 +68,8 @@ echo GridView::widget([
         ],
     ],
     'summary' => '{begin}-{end}，共{totalCount}条数据，共{pageCount}页',
-    'emptyText'=>'没有符合搜索项的数据'
+    'emptyText'=>'没有符合搜索项的数据',
+    'layout'=>"{items}\n{pager}\n{summary}",
 ]);
 ?>
 <script>
