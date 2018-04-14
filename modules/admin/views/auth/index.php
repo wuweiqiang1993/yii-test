@@ -46,7 +46,10 @@ echo GridView::widget([
             'class' => 'yii\grid\DataColumn',
             'attribute'=>'updated_at',
             'label'=>'最后修改时间',
-            'filterInputOptions'=>['class'=>'form-control','id'=>'logintime']
+            'filterInputOptions'=>['class'=>'form-control','id'=>'logintime'],
+            'value' => function($data) {
+                return date('Y-m-d H:i:s',$data->updated_at);
+            }
         ],
         [
             'class' => 'yii\grid\DataColumn',
@@ -69,7 +72,7 @@ echo GridView::widget([
     ],
     'summary' => '{begin}-{end}，共{totalCount}条数据，共{pageCount}页',
     'emptyText'=>'没有符合搜索项的数据',
-    'layout'=>"{items}\n{pager}\n{summary}",
+    'layout'=>"{summary}\n{items}\n{pager}",
 ]);
 ?>
 <script>
